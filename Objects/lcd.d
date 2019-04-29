@@ -1,0 +1,11 @@
+.\objects\lcd.o: LCD.c
+.\objects\lcd.o: LCD.h
+.\objects\lcd.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\lcd.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\lcd.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\lcd.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\inttypes.h
+.\objects\lcd.o: ..\..\..\..\inc/hw_types.h
+.\objects\lcd.o: ..\..\..\..\inc/hw_memmap.h
+.\objects\lcd.o: ..\..\..\..\driverlib/sysctl.h
+.\objects\lcd.o: ..\..\..\..\driverlib/gpio.h
+.\objects\lcd.o: ..\..\..\..\inc/tm4c123gh6pm.h
