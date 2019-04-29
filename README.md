@@ -1,4 +1,4 @@
-###Components
+# Components
 
 - 1602A-1 LCD
 -- Datasheet: https://www.openhacks.com/uploadsproductos/eone-1602a1.pdf
