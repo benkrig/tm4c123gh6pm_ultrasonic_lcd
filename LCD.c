@@ -3,7 +3,7 @@
 void lcd_init() {
 	SysCtlPeripheralEnable(LCD_PORT_ENABLE);	// Enable GPIOB clock
 
-	GPIO_PORTB_DIR_R |= 0xFF; // GPIOB as output
+	GPIO_PORTB_DIR_R |= 0xFF;	// GPIOB as output
 	GPIO_PORTB_DEN_R |= 0xFF;	// GPIOB Digital Enable
 
 	SysCtlDelay(50000);
@@ -50,38 +50,38 @@ void lcd_puts( char* s) {
 // type = 1, data write = DATA
 // 4-bit mode means we need to perform 2 writes each time.
 // 	first write is most signifigant bits, x in 0bxxxx ____
-//  second write is least signifigant bits, x in 0b____ xxxx
+// 	second write is least signifigant bits, x in 0b____ xxxx
 void lcd_putc(unsigned char c, int type) {
 	// WRITE TO MOST SIGNIFICANT BITS
 	// select register
 	if(type == DATA)GPIOPinWrite(LCD_PORT, RS, 0x01);	// DATA register is 1	
-	else GPIOPinWrite(LCD_PORT, RS, 0x00);						// CMD register is 0
+	else GPIOPinWrite(LCD_PORT, RS, 0x00);			// CMD register is 0
 
 	// write data
 	GPIOPinWrite(LCD_PORT, E, 0x02); 	// enable	
-	GPIOPinWrite(LCD_PORT, D4 | D5 | D6 | D7, (c & 0xF0) ); // write to most significant bits
+	GPIOPinWrite(LCD_PORT, D4 | D5 | D6 | D7, (c & 0xF0) );	// write to most significant bits
 
 	delayUs(3);	// hold for data write
 
 	// disable
-	GPIOPinWrite(LCD_PORT, E, 0x00);  // disable
-	delayUs(1); 											// enable fall time
+	GPIOPinWrite(LCD_PORT, E, 0x00);  	// disable
+	delayUs(1);				// enable fall time
 	// END SIGNIFICANT BITS
 
 	// WRITE TO LEAST SIGNIFICANT BITS
 	// register is already selected
 	// write data
 	GPIOPinWrite(LCD_PORT, D4 | D5 | D6 | D7, (c & 0x0F) << 4 );	// write to least significant bits
-	GPIOPinWrite(LCD_PORT, E, 0x02); 	// enable
+	GPIOPinWrite(LCD_PORT, E, 0x02);	// enable
 
 	delayUs(3);	// hold for data write
 
 	// disable
-	GPIOPinWrite(LCD_PORT, E, 0x00);  // disable
-	delayUs(1);												// enable fall time
+	GPIOPinWrite(LCD_PORT, E, 0x00);  	// disable
+	delayUs(1);				// enable fall time
 	// END LEAST SIGNIFICANT BITS
 
-	delayUs(20);											// hold time required for write to RAM
+	delayUs(20);	// hold time required for write to RAM
 }
 
 // *********************************************
