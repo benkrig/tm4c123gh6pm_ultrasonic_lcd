@@ -1,10 +1,12 @@
 #include "LCD.h"
 
 void lcd_init() {
-	SYSCTL_RCGC2_R = SYSCTL_RCGC2_GPIOB;	// Enable GPIOB clock
+	SysCtlPeripheralEnable(LCD_PORT_ENABLE);	// Enable GPIOB clock
 
 	GPIO_PORTB_DIR_R |= 0xFF; // GPIOB as output
 	GPIO_PORTB_DEN_R |= 0xFF;	// GPIOB Digital Enable
+
+	SysCtlDelay(50000);
 
 	lcd_clear();	// clear any noise from startup
 
@@ -35,7 +37,7 @@ void lcd_goto(char x, char y) {
 // clear the display
 void lcd_clear(void) {
 	lcd_putc(0x01, CMD);
-	SysCtlDelay(10);
+	delayMs(2);
 }
 
 void lcd_puts( char* s) {
@@ -51,47 +53,35 @@ void lcd_puts( char* s) {
 //  second write is least signifigant bits, x in 0b____ xxxx
 void lcd_putc(unsigned char c, int type) {
 	// WRITE TO MOST SIGNIFICANT BITS
+	// select register
+	if(type == DATA)GPIOPinWrite(LCD_PORT, RS, 0x01);	// DATA register is 1	
+	else GPIOPinWrite(LCD_PORT, RS, 0x00);						// CMD register is 0
 
-	// data setup
-	// we do this first to avoid any need for holding for data set up time
+	// write data
+	GPIOPinWrite(LCD_PORT, E, 0x02); 	// enable	
 	GPIOPinWrite(LCD_PORT, D4 | D5 | D6 | D7, (c & 0xF0) ); // write to most significant bits
 
-	// register select
-	if(type == DATA)GPIOPinWrite(LCD_PORT, RS, 0x01);	// DATA register is 1
-	else GPIOPinWrite(LCD_PORT, RS, 0x00);						// CMD register is 0
+	delayUs(3);	// hold for data write
 
-	GPIOPinWrite(LCD_PORT, E, 0x02); 	// enable
-	delayNs(25 + 1); 									// enable rise time
-
-	// data write occurs here
-	// data hold
-	delayNs(50 + 1);
-
+	// disable
 	GPIOPinWrite(LCD_PORT, E, 0x00);  // disable
-	delayNs(25 + 1); 								  // enable fall time
-
+	delayUs(1); 											// enable fall time
 	// END SIGNIFICANT BITS
 
-
 	// WRITE TO LEAST SIGNIFICANT BITS
-
-	// data setup
-	// we do this first to avoid any need for holding for data set up time
-	GPIOPinWrite(LCD_PORT, D4 | D5 | D6 | D7, (c & 0x0F) << 4 );
-
-	// register select
-	if(type == DATA)GPIOPinWrite(LCD_PORT, RS, 0x01);	// DATA register is 1
-	else GPIOPinWrite(LCD_PORT, RS, 0x00);						// CMD register is 0
-
+	// register is already selected
+	// write data
+	GPIOPinWrite(LCD_PORT, D4 | D5 | D6 | D7, (c & 0x0F) << 4 );	// write to least significant bits
 	GPIOPinWrite(LCD_PORT, E, 0x02); 	// enable
-	delayNs(25 + 1); 									// enable rise time
 
-	// data write occurs here
-	// data hold
-	delayNs(50 + 1);
+	delayUs(3);	// hold for data write
 
+	// disable
 	GPIOPinWrite(LCD_PORT, E, 0x00);  // disable
-	delayNs(25 + 1); 								  // enable fall time
+	delayUs(1);												// enable fall time
+	// END LEAST SIGNIFICANT BITS
+
+	delayUs(20);											// hold time required for write to RAM
 }
 
 // *********************************************
@@ -116,6 +106,7 @@ void delayUs(uint32_t ui32Us) {
 
 
 // delay nanoseconds
+// clock speed is 16MHz, meaning the lowest we can go is 62.5ns
 void delayNs(uint32_t ui32Ns) {
 	SysCtlDelay(ui32Ns * (SysCtlClockGet() / 3 / 1000000000));
 }
