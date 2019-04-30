@@ -19,8 +19,8 @@
 #define D5                               GPIO_PIN_5
 #define D6                               GPIO_PIN_6
 #define D7                               GPIO_PIN_7
-#define CMD															 0
-#define DATA														 1
+#define CMD				 0
+#define DATA				 1
 
 void lcd_clear(void);
 void lcd_puts(char*);
