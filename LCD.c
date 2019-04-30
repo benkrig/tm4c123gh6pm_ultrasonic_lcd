@@ -22,7 +22,7 @@ void lcd_init() {
 	lcd_putc(0x80, CMD);	// set DDRAM address for write - 0b1000 000 - set DDRAM address to 0's.
 
 	// turn display on, turn cursor on, turn blink on
-	lcd_putc(0x0f, CMD); 	// display on/off - 0b0000 1111 - D=1, display on. C=1, cursor on. B=1, blink on.
+	lcd_putc(0x0C, CMD); 	// display on/off - 0b0000 1100 - D=1, display on. C=0, cursor off. B=0, blink off.
 
 	lcd_clear();	// clear any noise after setup
 }
