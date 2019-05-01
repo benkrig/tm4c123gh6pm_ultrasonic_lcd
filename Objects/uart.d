@@ -1,0 +1,15 @@
+.\objects\uart.o: UART.c
+.\objects\uart.o: UART.h
+.\objects\uart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\uart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\uart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\uart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\inttypes.h
+.\objects\uart.o: ..\..\..\..\inc/hw_types.h
+.\objects\uart.o: ..\..\..\..\inc/hw_memmap.h
+.\objects\uart.o: ..\..\..\..\driverlib/sysctl.h
+.\objects\uart.o: ..\..\..\..\driverlib/uart.h
+.\objects\uart.o: ..\..\..\..\driverlib/gpio.h
+.\objects\uart.o: ..\..\..\..\driverlib/pin_map.h
+.\objects\uart.o: ..\..\..\..\driverlib/rom_map.h
+.\objects\uart.o: ..\..\..\..\driverlib/interrupt.h
+.\objects\uart.o: ..\..\..\..\inc/tm4c123gh6pm.h

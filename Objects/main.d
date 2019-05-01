@@ -9,3 +9,8 @@
 .\objects\main.o: ..\..\..\..\driverlib/sysctl.h
 .\objects\main.o: ..\..\..\..\driverlib/gpio.h
 .\objects\main.o: ..\..\..\..\inc/tm4c123gh6pm.h
+.\objects\main.o: UART.h
+.\objects\main.o: ..\..\..\..\driverlib/uart.h
+.\objects\main.o: ..\..\..\..\driverlib/pin_map.h
+.\objects\main.o: ..\..\..\..\driverlib/rom_map.h
+.\objects\main.o: ..\..\..\..\driverlib/interrupt.h

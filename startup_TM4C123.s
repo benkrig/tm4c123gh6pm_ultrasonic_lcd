@@ -77,7 +77,7 @@ __heap_limit
 ; External declarations for the interrupt handlers used by the application.
 ;
 ;******************************************************************************
-       EXTERN  ADC0_Handler
+       EXTERN  UART4_Handler
 
 ;******************************************************************************
 ;
@@ -162,7 +162,7 @@ __Vectors
         DCD     IntDefaultHandler           ; SSI2 Rx and Tx
         DCD     IntDefaultHandler           ; SSI3 Rx and Tx
         DCD     IntDefaultHandler           ; UART3 Rx and Tx
-        DCD     IntDefaultHandler           ; UART4 Rx and Tx
+        DCD     UART4_Handler	            ; UART4 Rx and Tx
         DCD     IntDefaultHandler           ; UART5 Rx and Tx
         DCD     IntDefaultHandler           ; UART6 Rx and Tx
         DCD     IntDefaultHandler           ; UART7 Rx and Tx
