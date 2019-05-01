@@ -456,6 +456,16 @@
               <FileType>5</FileType>
               <FilePath>.\UART.h</FilePath>
             </File>
+            <File>
+              <FileName>distance.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\distance.c</FilePath>
+            </File>
+            <File>
+              <FileName>distance.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\distance.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

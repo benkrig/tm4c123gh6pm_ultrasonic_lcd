@@ -77,7 +77,11 @@ __heap_limit
 ; External declarations for the interrupt handlers used by the application.
 ;
 ;******************************************************************************
-       EXTERN  UART4_Handler
+     
+	  
+	 
+	EXTERN Timer0IntHandler
+	EXTERN  PortAIntHandler
 
 ;******************************************************************************
 ;
@@ -102,7 +106,7 @@ __Vectors
         DCD     0                           ; Reserved
         DCD     IntDefaultHandler           ; The PendSV handler
         DCD     IntDefaultHandler           ; The SysTick handler
-        DCD     IntDefaultHandler           ; GPIO Port A
+        DCD     PortAIntHandler         ; GPIO Port A
         DCD     IntDefaultHandler           ; GPIO Port B
         DCD     IntDefaultHandler           ; GPIO Port C
         DCD     IntDefaultHandler           ; GPIO Port D
@@ -121,7 +125,7 @@ __Vectors
         DCD     IntDefaultHandler           ; ADC Sequence 2
         DCD     IntDefaultHandler           ; ADC Sequence 3
         DCD     IntDefaultHandler           ; Watchdog timer
-        DCD     IntDefaultHandler           ; Timer 0 subtimer A
+        DCD     Timer0IntHandler          ; Timer 0 subtimer A
         DCD     IntDefaultHandler           ; Timer 0 subtimer B
         DCD     IntDefaultHandler           ; Timer 1 subtimer A
         DCD     IntDefaultHandler           ; Timer 1 subtimer B
@@ -162,7 +166,7 @@ __Vectors
         DCD     IntDefaultHandler           ; SSI2 Rx and Tx
         DCD     IntDefaultHandler           ; SSI3 Rx and Tx
         DCD     IntDefaultHandler           ; UART3 Rx and Tx
-        DCD     UART4_Handler	            ; UART4 Rx and Tx
+        DCD     IntDefaultHandler 	        ; UART4 Rx and Tx
         DCD     IntDefaultHandler           ; UART5 Rx and Tx
         DCD     IntDefaultHandler           ; UART6 Rx and Tx
         DCD     IntDefaultHandler           ; UART7 Rx and Tx
@@ -201,7 +205,7 @@ __Vectors
         DCD     IntDefaultHandler           ; Wide Timer 1 subtimer A
         DCD     IntDefaultHandler           ; Wide Timer 1 subtimer B
         DCD     IntDefaultHandler           ; Wide Timer 2 subtimer A
-        DCD     IntDefaultHandler           ; Wide Timer 2 subtimer B
+        DCD      IntDefaultHandler         ; Wide Timer 2 subtimer B
         DCD     IntDefaultHandler           ; Wide Timer 3 subtimer A
         DCD     IntDefaultHandler           ; Wide Timer 3 subtimer B
         DCD     IntDefaultHandler           ; Wide Timer 4 subtimer A
