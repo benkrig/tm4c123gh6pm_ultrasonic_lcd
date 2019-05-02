@@ -1,7 +1,4 @@
-/*!
- * @author      Yash Bansod
- * @date        12th November 2017
- *
+/*
  * @brief       Ultrasonin HC-SR04
  * @details     This is a sample code for HC-SR04. The code calculates the distance
  *              of an obstacle from the HC-SR04 sensor and publishes the data over
