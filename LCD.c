@@ -3,10 +3,10 @@
 void lcd_init() {
 	SysCtlPeripheralEnable(LCD_PORT_ENABLE);	// Enable GPIOB clock
 
-	GPIO_PORTB_DIR_R |= 0xFF;	// GPIOB as output
-	GPIO_PORTB_DEN_R |= 0xFF;	// GPIOB Digital Enable
-
-	SysCtlDelay(50000);
+	GPIOPinTypeGPIOOutput(LCD_PORT, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7);
+	
+	//GPIO_PORTB_DIR_R |= 0xFF;	// GPIOB as output
+	//GPIO_PORTB_DEN_R |= 0xFF;	// GPIOB Digital Enable
 
 	lcd_clear();	// clear any noise from startup
 
@@ -81,6 +81,10 @@ void lcd_putc(unsigned char c, int type) {
 	delayUs(1);				// enable fall time
 	// END LEAST SIGNIFICANT BITS
 
+	// delay times from mcu, propagation times all require this extended delay
+	// delay times inside lcd and propagation within the lcd additionally require this delay
+	// if we were dealing directly with the lcd's cu we could match timings directly from datasheet
+	// but because of the limited abilities of our tm4c123 we are not able to generate exact timings for nanoseconds
 	delayUs(20);	// hold time required for write to RAM
 }
 

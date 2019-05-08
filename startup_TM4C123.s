@@ -78,6 +78,7 @@ __heap_limit
 ;
 ;******************************************************************************
        EXTERN  UART4_Handler
+	   EXTERN  PortFIntHandler
 
 ;******************************************************************************
 ;
@@ -132,7 +133,7 @@ __Vectors
         DCD     IntDefaultHandler           ; Analog Comparator 2
         DCD     IntDefaultHandler           ; System Control (PLL, OSC, BO)
         DCD     IntDefaultHandler           ; FLASH Control
-        DCD     IntDefaultHandler           ; GPIO Port F
+        DCD     PortFIntHandler           ; GPIO Port F
         DCD     IntDefaultHandler           ; GPIO Port G
         DCD     IntDefaultHandler           ; GPIO Port H
         DCD     IntDefaultHandler           ; UART2 Rx and Tx

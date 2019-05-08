@@ -20,7 +20,7 @@
 #define GPIO_PORT_CLK				SYSCTL_PERIPH_GPIOC
 #define UART_PORT_CLK				SYSCTL_PERIPH_UART4
 #define UART_PORT_TX				GPIO_PC5_U4TX
-#define UART_PORT_TX_PIN		GPIO_PIN_5
+#define GPIO_TX_PIN		GPIO_PIN_5
 #define UART_PORT_RX				GPIO_PC4_U4RX
 #define GPIO_RX_PIN		GPIO_PIN_4
 #define UART_INT						INT_UART4
@@ -28,7 +28,7 @@
 
 void uart_init(void);
 void uart_puts(char*);
-void uart_receive(volatile char*);
+void uart_receive(void);
 void uart_putc(unsigned char,int type);
 
 #endif /* UART_H_ */

@@ -13,3 +13,4 @@
 .\objects\uart.o: ..\..\..\..\driverlib/rom_map.h
 .\objects\uart.o: ..\..\..\..\driverlib/interrupt.h
 .\objects\uart.o: ..\..\..\..\inc/tm4c123gh6pm.h
+.\objects\uart.o: LCD.h
