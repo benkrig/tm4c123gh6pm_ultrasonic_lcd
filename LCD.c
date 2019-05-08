@@ -1,16 +1,15 @@
 #include "LCD.h"
 
+// see 1602 LCD data sheet for instruction details
+// 1602 LCD has setup requirements for different use cases
+
 void lcd_init() {
-	SysCtlPeripheralEnable(LCD_PORT_ENABLE);	// Enable GPIOB clock
+	SysCtlPeripheralEnable(LCD_PORT_ENABLE);	// Enable LCD Port Enable
 
 	GPIOPinTypeGPIOOutput(LCD_PORT, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7);
 	
-	//GPIO_PORTB_DIR_R |= 0xFF;	// GPIOB as output
-	//GPIO_PORTB_DEN_R |= 0xFF;	// GPIOB Digital Enable
-
 	lcd_clear();	// clear any noise from startup
 
-	// see 1602 LCD data sheet for instruction details
 
 	// 4 bit mode, 2 lines
 	lcd_putc(0x28, CMD);	// function set - 0b0010 1000 - DL=0, 4-bit mode. N=1, 2 lines.

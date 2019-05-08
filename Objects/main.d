@@ -14,7 +14,3 @@
 .\objects\main.o: ..\..\..\..\driverlib/pin_map.h
 .\objects\main.o: ..\..\..\..\driverlib/rom_map.h
 .\objects\main.o: ..\..\..\..\driverlib/interrupt.h
-.\objects\main.o: PWM.h
-.\objects\main.o: ..\..\..\..\inc/hw_gpio.h
-.\objects\main.o: ..\..\..\..\inc/hw_pwm.h
-.\objects\main.o: ..\..\..\..\driverlib/pwm.h

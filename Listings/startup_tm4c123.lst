@@ -231,7 +231,8 @@ ARM Macro Assembler    Page 4
                                                             rol (PLL, OSC, BO)
   135 000000B4 00000000        DCD              IntDefaultHandler 
                                                             ; FLASH Control
-  136 000000B8 00000000        DCD              PortFIntHandler ; GPIO Port F
+  136 000000B8 00000000        DCD              IntDefaultHandler ; GPIO Port F
+                                                            
   137 000000BC 00000000        DCD              IntDefaultHandler ; GPIO Port G
                                                             
   138 000000C0 00000000        DCD              IntDefaultHandler ; GPIO Port H
@@ -257,13 +258,13 @@ ARM Macro Assembler    Page 4
   151 000000F4 00000000        DCD              IntDefaultHandler 
                                                             ; PWM Generator 3
   152 000000F8 00000000        DCD              IntDefaultHandler ; uDMA Softwa
-                                                            re Transfer
 
 
 
 ARM Macro Assembler    Page 5 
 
 
+                                                            re Transfer
   153 000000FC 00000000        DCD              IntDefaultHandler ; uDMA Error
   154 00000100 00000000        DCD              IntDefaultHandler 
                                                             ; ADC1 Sequence 0
@@ -322,13 +323,13 @@ ARM Macro Assembler    Page 5
   190 00000190 00000000        DCD              0           ; Reserved
   191 00000194 00000000        DCD              0           ; Reserved
   192 00000198 00000000        DCD              0           ; Reserved
-  193 0000019C 00000000        DCD              0           ; Reserved
 
 
 
 ARM Macro Assembler    Page 6 
 
 
+  193 0000019C 00000000        DCD              0           ; Reserved
   194 000001A0 00000000        DCD              0           ; Reserved
   195 000001A4 00000000        DCD              0           ; Reserved
   196 000001A8 00000000        DCD              0           ; Reserved
@@ -387,13 +388,13 @@ ARM Macro Assembler    Page 6
   226 00000220 00000000        DCD              IntDefaultHandler 
                                                             ; GPIO Port P4
   227 00000224 00000000        DCD              IntDefaultHandler 
-                                                            ; GPIO Port P5
 
 
 
 ARM Macro Assembler    Page 7 
 
 
+                                                            ; GPIO Port P5
   228 00000228 00000000        DCD              IntDefaultHandler 
                                                             ; GPIO Port P6
   229 0000022C 00000000        DCD              IntDefaultHandler 
@@ -452,13 +453,13 @@ ARM Macro Assembler    Page 7
   257 0000026C         ; floating-point registers (which will fault if floating
                        -point is not
   258 0000026C         ; enabled).  Any configuration of the floating-point uni
-                       t using
 
 
 
 ARM Macro Assembler    Page 8 
 
 
+                       t using
   259 0000026C         ; DriverLib APIs must be done here prior to the floating
                        -point unit
   260 0000026C         ; being enabled.
@@ -517,13 +518,13 @@ ARM Macro Assembler    Page 8
   301 00000284         ; This is the code that gets called when the processor r
                        eceives an unexpected
   302 00000284         ; interrupt.  This simply enters an infinite loop, prese
-                       rving the system state
 
 
 
 ARM Macro Assembler    Page 9 
 
 
+                       rving the system state
   303 00000284         ; for examination by a debugger.
   304 00000284         ;
   305 00000284         ;*******************************************************
@@ -582,13 +583,13 @@ ARM Macro Assembler    Page 9
   350 0000000A         ;*******************************************************
                        ***********************
   351 0000000A 00 00           ALIGN
-  352 0000000C         
 
 
 
 ARM Macro Assembler    Page 10 
 
 
+  352 0000000C         
   353 0000000C         ;*******************************************************
                        ***********************
   354 0000000C         ;
@@ -736,19 +737,20 @@ Symbol: IntDefaultHandler
       At line 133 in file startup_TM4C123.s
       At line 134 in file startup_TM4C123.s
       At line 135 in file startup_TM4C123.s
+      At line 136 in file startup_TM4C123.s
       At line 137 in file startup_TM4C123.s
       At line 138 in file startup_TM4C123.s
       At line 139 in file startup_TM4C123.s
       At line 140 in file startup_TM4C123.s
       At line 141 in file startup_TM4C123.s
       At line 142 in file startup_TM4C123.s
-      At line 143 in file startup_TM4C123.s
 
 
 
 ARM Macro Assembler    Page 2 Alphabetic symbol ordering
 Relocatable symbols
 
+      At line 143 in file startup_TM4C123.s
       At line 144 in file startup_TM4C123.s
       At line 145 in file startup_TM4C123.s
       At line 146 in file startup_TM4C123.s
@@ -807,13 +809,13 @@ Relocatable symbols
       At line 232 in file startup_TM4C123.s
       At line 233 in file startup_TM4C123.s
       At line 234 in file startup_TM4C123.s
-      At line 235 in file startup_TM4C123.s
 
 
 
 ARM Macro Assembler    Page 3 Alphabetic symbol ordering
 Relocatable symbols
 
+      At line 235 in file startup_TM4C123.s
       At line 236 in file startup_TM4C123.s
       At line 237 in file startup_TM4C123.s
       At line 238 in file startup_TM4C123.s
@@ -921,8 +923,8 @@ Symbol: PortFIntHandler
    Definitions
       At line 81 in file startup_TM4C123.s
    Uses
-      At line 136 in file startup_TM4C123.s
-Comment: PortFIntHandler used once
+      None
+Comment: PortFIntHandler unused
 UART4_Handler 00000000
 
 Symbol: UART4_Handler
