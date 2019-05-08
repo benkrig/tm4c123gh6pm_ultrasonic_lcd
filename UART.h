@@ -27,8 +27,6 @@
 #define BAUDRATE						115200
 
 void uart_init(void);
-void uart_puts(char*);
 void uart_receive(void);
-void uart_putc(unsigned char,int type);
 
 #endif /* UART_H_ */

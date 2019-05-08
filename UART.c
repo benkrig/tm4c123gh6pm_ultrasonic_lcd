@@ -26,7 +26,10 @@ void uart_init(void) {
 
 void uart_receive(void) {
 	char start_c; // track our start char
-	lcd_goto(1,1);
+	
+	lcd_goto(1, 1);
+	lcd_puts("Distance (cm):");
+	lcd_goto(2, 1);
 
 	// find message start
 	while(UARTCharsAvail(UART_PORT_BASE)) {
@@ -40,7 +43,7 @@ void uart_receive(void) {
 	// read message
 	while(UARTCharsAvail(UART_PORT_BASE)) {
 		char message_c = UARTCharGet(UART_PORT_BASE);
-		if (message_c == '*') {
+		if (message_c == '*') {			
 			// message has ended
 			// to allow time for lcd_clear, we disable UART Interrupts and clear
 			UARTIntDisable(UART_PORT_BASE, UART_INT_RX);
