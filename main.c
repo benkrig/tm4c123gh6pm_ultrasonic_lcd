@@ -1,47 +1,176 @@
-#include "LCD.h"
+/*!
+ * @author      Yash Bansod
+ * @date        12th November 2017
+ *
+ * @brief       Ultrasonin HC-SR04
+ * @details     This is a sample code for HC-SR04. The code calculates the distance
+ *              of an obstacle from the HC-SR04 sensor and publishes the data over
+ *              the UART channel.
+ * @note        The tm4c123ghpm_startup_ccs.c contains the vector table for the
+ *              microcontroller. It was modified to execute the specified ISR on
+ *              Timer0A and PortA Interrupts.
+ */
+/* -----------------------          Include Files       --------------------- */
+#include <stdint.h>                         // Library of Standard Integer Types
+#include <stdbool.h>                        // Library of Standard Boolean Types
+#include <stdlib.h>                         // Library of Standard Datatype Conversions
+#include "inc/tm4c123gh6pm.h"               // Definitions for interrupt and register assignments on Tiva C
+#include "inc/hw_memmap.h"                  // Macros defining the memory map of the Tiva C Series device
+#include "inc/hw_types.h"                   // Defines common types and macros
+#include "inc/hw_timer.h"                   // Defines and macros used when accessing the timer
+#include "inc/hw_gpio.h"                    // Defines Macros for GPIO hardware
+#include "driverlib/debug.h"                // Macros for assisting debug of the driver library
+#include "driverlib/sysctl.h"               // Defines and macros for System Control API of DriverLib
+#include "driverlib/interrupt.h"            // Defines and macros for NVIC Controller API of DriverLib
+#include "driverlib/timer.h"                // Defines and macros for Timer API of driverLib
+#include "driverlib/gpio.h"                 // Defines and macros for GPIO API of DriverLib
+#include "driverlib/pin_map.h"              // Mapping of peripherals to pins for all parts
+#include "driverlib/uart.h"                 // Defines and Macros for the UART
+#include "driverlib/rom.h"                  // Defines and macros for ROM API of driverLib
 #include "UART.h"
+#include "stdio.h"
+#include "PWM.h"
+#define UART0_BAUDRATE  115200              // Macro for UART0 Baud rate
 
-volatile char* distance;
+/* -----------------------      Global Variables        --------------------- */
+volatile bool boolTrigCondition = 1;        // Variable to control the Trigger Pin Switching
+volatile uint32_t ui32EchoDuration = 0;     // Variable to store duration for which Echo Pin is high
+volatile uint32_t ui32ObstacleDist = 0;     // Variable to store distance of the Obstacle
+uint8_t ui8WelcomeText[] = {"\n\rDistance: "};
 
-void led_init(void) {
-	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
-	GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_2);
+uint32_t ui32Period;
+volatile uint8_t ui8Adjust = 75;
+//volatile uint32_t counter = 0; // counter
+
+/* -----------------------      Function Prototypes     --------------------- */
+void Timer0IntHandler(void);                // The prototype of the ISR for Timer0 Interrupt
+void PortAIntHandler(void);                 // Prototype for ISR of GPIO PortA
+
+/* -----------------------          Main Program        --------------------- */
+int main(void){
+    // Set the System clock to 80MHz and Enable the clock for peripherals PortA, Timer0, Timer2 and UART0
+    SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
+    //SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER2);
+    // Master interrupt enable API for all interrupts
+    IntMasterEnable();
+    // Configure PA0 as UART0_Rx and PA1 as UART1_Tx
+	
+    GPIOPinConfigure(GPIO_PA0_U0RX); // Rx uses Pin 0 
+    GPIOPinConfigure(GPIO_PA1_U0TX); // Tx uses Pin 1 
+    GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+	
+    // Configure the baud rate and data setup for the UART0
+    //UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), UART0_BAUDRATE, UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE );
+    // Enable the UART0
+    //UARTEnable(UART0_BASE);
+	 
+		// Set the servo motor 
+	
+    // Set the PA3 port as Output. Trigger Pin
+    GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE, GPIO_PIN_3); // trigger is 3 
+    // Set the PA2 port as Input with a weak Pull-down. Echo Pin
+    GPIOPinTypeGPIOInput(GPIO_PORTA_BASE, GPIO_PIN_2); // echo is 2 
+		
+		GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE, GPIO_PIN_5); //pin for buzzer
+		
+    GPIOPadConfigSet(GPIO_PORTA_BASE, GPIO_PIN_2, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPD);
+    // Configure and enable the Interrupt on both edges for PA2. Echo Pin
+    IntEnable(INT_GPIOA);
+    GPIOIntTypeSet(GPIO_PORTA_BASE, GPIO_PIN_2, GPIO_BOTH_EDGES);
+    GPIOIntEnable(GPIO_PORTA_BASE, GPIO_INT_PIN_2);
+    // Configure Timer0 to run in one-shot down-count mode
+    TimerConfigure(TIMER0_BASE, TIMER_CFG_ONE_SHOT);
+    // Enable the Interrupt specific vector associated with Timer0A
+    IntEnable(INT_TIMER0A);
+    // Enables a specific event within the timer to generate an interrupt
+    TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
+    // Configure Timer2 to run in one-shot up-count mode
+    TimerConfigure(TIMER2_BASE, TIMER_CFG_ONE_SHOT_UP);
+    // Transmit a New Page Character to the Terminal
+    //UARTCharPutNonBlocking(UART0_BASE, '\f');
+    uint8_t iter;
+    uart_init();
+		pwm_init(&ui8Adjust, &ui32Period);
+		
+		IntEnable(INT_GPIOF);
+		
+		/*for (iter = 0; iter<sizeof(ui8WelcomeText); iter++ ) UARTCharPut(UART0_BASE, ui8WelcomeText[iter]);*/
+    while (1){
+        if (boolTrigCondition){
+            // Load the Timer with value for generating a  delay of 10 uS.
+            TimerLoadSet(TIMER0_BASE, TIMER_A, (SysCtlClockGet() / 100000) -1);
+            // Make the Trigger Pin (PA3) High
+            GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+            // Enable the Timer0 to cause an interrupt when timeout occurs
+            TimerEnable(TIMER0_BASE, TIMER_A);
+            // Disable the condition for Trigger Pin Switching
+            boolTrigCondition = 0;
+        }
+    }
+}
+/* -----------------------      Function Definition     --------------------- */
+void Timer0IntHandler(void){
+    // The ISR for Timer0 Interrupt Handling
+    // Clear the timer interrupt
+    TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
+    // Disable the timer
+    TimerDisable(TIMER0_BASE, TIMER_A);
+    // Make the Trigger Pin (PA3) Low
+    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
 }
 
-void test_fun(void) {
-	GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, GPIO_PIN_2);
-	SysCtlDelay(SysCtlClockGet() / 2);
-	GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, 0);
-	SysCtlDelay(SysCtlClockGet() / 2);
-	
-	while(UARTCharsAvail(UART4_BASE)) {
-		UARTCharGet(UART4_BASE);
-	}
+void PortAIntHandler(void){
+    // The ISR for GPIO PortA Interrupt Handling
+    // Clear the GPIO Hardware Interrupt
+    GPIOIntClear(GPIO_PORTA_BASE , GPIO_INT_PIN_2);
+    // Condition when Echo Pin (PA2) goes high
+    if (GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_2) == GPIO_PIN_2){
+        // Initialize Timer2 with value 0
+        HWREG(TIMER2_BASE + TIMER_O_TAV) = 0;
+        // Enable Timer2 to start measuring duration for which Echo Pin is High
+        TimerEnable(TIMER2_BASE, TIMER_A);
+    }
+    else{
+        ui32EchoDuration = TimerValueGet(TIMER2_BASE, TIMER_A);
+        // Disable Timer2 to stop measuring duration for which Echo Pin is High
+        TimerDisable(TIMER2_BASE, TIMER_A);
+        // Convert the Timer Duration to Distance Value according to Ultrasonic's formula
+        ui32ObstacleDist = ui32EchoDuration / 4640;
+        // Convert the Distance Value from Integer to Array of Characters
+        char chArrayDistance[8];
+			 //convertToCharArray(chArrayDistance, ui32ObstacleDist);
+			 sprintf(chArrayDistance, "%lu", ui32ObstacleDist);
+				if (ui32ObstacleDist < 40)
+				{
+					GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_5, GPIO_PIN_5); // uses the buzzer
+				}
+				else
+				{
+					GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_5, 0);
+				}
+				
+				//if (counter > 10)
+				//{
+					uart_send(strlen(chArrayDistance),chArrayDistance);
+					//counter = 0;
+				//}
+				//counter++;
+				 
+				
+        // Transmit the distance reading to the terminal
+        uint8_t iter;
+        //for (iter = 0; iter<sizeof(chArrayDistance); iter++ ) UARTCharPut(UART0_BASE, chArrayDistance[iter]);
+       // for (iter = 0; iter<sizeof(ui8WelcomeText); iter++ ) UARTCharPut(UART0_BASE, ui8WelcomeText[iter]);
+        // Enable condition for Trigger Pulse
+        boolTrigCondition = 1;
+    }
 }
 
-void UART4_Handler(void) {
-	// clear flag
-	UARTIntClear(UART4_BASE, UART_INT_RX);
-	test_fun();
-	// call receiver
-	//uart_receive(distance);
-}
-
-
-int main(void) {
-	IntMasterEnable();
-	IntEnable(INT_UART4);
-	
-	led_init();
-	uart_init();
-	lcd_init();
-	
-	while(1){
-		lcd_goto(1,1);
-		lcd_puts("No distance...");
-		lcd_goto(2,1);
-		lcd_puts("Connect UART...");
-		SysCtlDelay(SysCtlClockGet() / 2);
-		lcd_clear();
-	}
+void PortFIntHandler(void){
+	 // The ISR for GPIO PortF Interrupt Handling
+    GPIOIntClear(GPIO_PORTF_BASE , GPIO_INT_PIN_4 | GPIO_INT_PIN_0);
+		pwm_handler(&ui8Adjust, &ui32Period);
 }

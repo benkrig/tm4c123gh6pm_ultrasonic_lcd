@@ -1,0 +1,17 @@
+.\objects\pwm.o: PWM.c
+.\objects\pwm.o: PWM.h
+.\objects\pwm.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\pwm.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\pwm.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\pwm.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\inttypes.h
+.\objects\pwm.o: ..\..\..\..\inc/hw_types.h
+.\objects\pwm.o: ..\..\..\..\inc/hw_memmap.h
+.\objects\pwm.o: ..\..\..\..\inc/hw_gpio.h
+.\objects\pwm.o: ..\..\..\..\driverlib/sysctl.h
+.\objects\pwm.o: ..\..\..\..\driverlib/uart.h
+.\objects\pwm.o: ..\..\..\..\driverlib/gpio.h
+.\objects\pwm.o: ..\..\..\..\driverlib/pin_map.h
+.\objects\pwm.o: ..\..\..\..\driverlib/rom_map.h
+.\objects\pwm.o: ..\..\..\..\inc/hw_pwm.h
+.\objects\pwm.o: ..\..\..\..\driverlib/pwm.h
+.\objects\pwm.o: ..\..\..\..\inc/tm4c123gh6pm.h
